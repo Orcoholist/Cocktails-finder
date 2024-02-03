@@ -1,0 +1,95 @@
+<script setup>
+import { ref } from "vue";
+import AppLayout from "@/components/AppLayout.vue";
+import CocktailThumb from "@/components/CocktailThumb.vue";
+import { useRootStore } from "@/stores/root";
+import { storeToRefs } from "pinia";
+
+const rootStore = useRootStore();
+rootStore.getIngredients();
+
+const { ingredients, cocktails } = storeToRefs(rootStore);
+const ingridient = ref(null);
+
+function getCocktails() {
+  rootStore.getCocktails(ingridient.value);
+}
+</script>
+
+<template>
+  <AppLayout imgUrl="/src/assets/img/bg-1.jpg">
+    <div class="wapper">
+      <div v-if="!ingridient || !cocktails" class="info">
+        <div class="title">Welcome to Coctails</div>
+        <div class="line"></div>
+        <div class="select-wrapper">
+          <el-select
+            v-model="ingridient"
+            placeholder="Choose main ingredient"
+            size="large"
+            class="select"
+            @change="rootStore.getCocktails(ingridient)"
+          >
+            <el-option
+              class="option"
+              v-for="item in ingredients"
+              :key="item.strIngredient1"
+              :label="item.strIngredient1"
+              :value="item.strIngredient1"
+            />
+          </el-select>
+        </div>
+        <div class="text">
+          Try our delicious cocktail recipes for every occasion. Find delicious
+          cocktail recipes by ingredient through our cocktail generator.
+        </div>
+        <img src="/src/assets/img/cocktails.png" alt="cocktails" class="img" />
+      </div>
+      <div v-else class="info">
+        <div class="title">COCKTAILS WITH {{ ingridient }}</div>
+        <div class="line"></div>
+        <div class="cocktails">
+          <CocktailThumb
+            v-for="cocktail in cocktails"
+            :key="cocktail.idDrink"
+            :cocktail="cocktail"
+          />
+        </div>
+      </div>
+    </div>
+  </AppLayout>
+</template>
+
+<style lang="sass" scoped>
+@import "../assets/styles/main.sass"
+
+.wapper
+    display: flex
+    justify-content: center
+    align-items: center
+
+.info
+    padding: 80px 0
+    text-align: center
+.select-wrapper
+    padding-top: 50px
+.select
+    width: 220px
+.text
+    padding-top: 50px
+    // line-height: 36
+    letter-spacing: 0.1em
+    color: $textMuted
+
+
+.img
+    margin-top: 60px
+.cocktails
+  display: flex
+  justify-content: space-between
+  align-items: center
+  max-height: 600px
+  overflow-y: auto
+  margin-top: 60px
+  flex-wrap: wrap
+</style>
