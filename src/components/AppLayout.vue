@@ -2,7 +2,7 @@
 import { computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { Back } from "@element-plus/icons-vue";
-// import { ROUTES_PATHS } from "@/constants";
+import { ROUTES_PATHS } from "@/constants";
 
 const props = defineProps({
   imgUrl: {

@@ -1,37 +1,44 @@
 <script setup>
-import { ref } from "vue";
-import AppLayout from "@/components/AppLayout.vue";
-import CocktailThumb from "@/components/CocktailThumb.vue";
+import AppLayout from "../components/AppLayout.vue";
+import CocktailThumb from "../components/CocktailThumb.vue";
 import { useRootStore } from "@/stores/root";
 import { storeToRefs } from "pinia";
 
 const rootStore = useRootStore();
 rootStore.getIngredients();
 
-const { ingredients, cocktails } = storeToRefs(rootStore);
-const ingridient = ref(null);
+const { ingredients, ingredient, cocktails } = storeToRefs(rootStore);
 
 function getCocktails() {
-  rootStore.getCocktails(ingridient.value);
+  rootStore.getCocktails(rootStore.ingredient);
+}
+
+function removeIngredient() {
+  rootStore.setIngredient(null);
 }
 </script>
 
 <template>
-  <AppLayout imgUrl="/src/assets/img/bg-1.jpg">
-    <div class="wapper">
-      <div v-if="!ingridient || !cocktails" class="info">
-        <div class="title">Welcome to Coctails</div>
+  <AppLayout
+    imgUrl="src/assets/img/bg-1.jpg"
+    :backFunc="removeIngredient"
+    :is-back-button-visible="!!ingredient"
+  >
+    <div class="wrapper">
+      <div v-if="!ingredient || !cocktails" class="info">
+        <div class="title">Choose your drink</div>
         <div class="line"></div>
         <div class="select-wrapper">
           <el-select
-            v-model="ingridient"
+            v-model="rootStore.ingredient"
             placeholder="Choose main ingredient"
             size="large"
+            filterable
+            allow-create
             class="select"
-            @change="rootStore.getCocktails(ingridient)"
+            @change="getCocktails"
           >
             <el-option
-              class="option"
               v-for="item in ingredients"
               :key="item.strIngredient1"
               :label="item.strIngredient1"
@@ -43,10 +50,10 @@ function getCocktails() {
           Try our delicious cocktail recipes for every occasion. Find delicious
           cocktail recipes by ingredient through our cocktail generator.
         </div>
-        <img src="/src/assets/img/cocktails.png" alt="cocktails" class="img" />
+        <img src="src/assets/img/cocktails.png" alt="Cocktails" class="img" />
       </div>
       <div v-else class="info">
-        <div class="title">COCKTAILS WITH {{ ingridient }}</div>
+        <div class="title">COCKTAILS WITH {{ ingredient }}</div>
         <div class="line"></div>
         <div class="cocktails">
           <CocktailThumb
@@ -61,35 +68,30 @@ function getCocktails() {
 </template>
 
 <style lang="sass" scoped>
-@import "../assets/styles/main.sass"
+@import '../assets/styles/main'
 
-.wapper
-    display: flex
-    justify-content: center
-    align-items: center
-
-.info
-    padding: 80px 0
-    text-align: center
 .select-wrapper
-    padding-top: 50px
-.select
-    width: 220px
-.text
-    padding-top: 50px
-    // line-height: 36
-    letter-spacing: 0.1em
-    color: $textMuted
+  padding-top: 50px
 
+.select
+  width: 220px
+
+.text
+  max-width: 516px
+  margin: 0 auto
+  padding-top: 50px
+  line-height: 36px
+  letter-spacing: 0.1em
+  color: $textMuted
 
 .img
-    margin-top: 60px
+  margin-top: 60px
+
 .cocktails
   display: flex
-  justify-content: space-between
   align-items: center
-  max-height: 600px
+  flex-wrap: wrap
+  max-height: 400px
   overflow-y: auto
   margin-top: 60px
-  flex-wrap: wrap
 </style>
