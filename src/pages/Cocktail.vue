@@ -47,7 +47,7 @@ getCocktail();
               :key="key"
               class="list-item"
             >
-              {{ item.name }}
+              {{ item.name }}             
               <template v-if="item.measure">
                 |
                 {{ item.measure }}
